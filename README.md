@@ -1,2 +1,2 @@
-# azure-powershell-scripts
-Powershell Scripts for Azure
+# azure-scripts
+Scripts for Azure
