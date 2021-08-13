@@ -344,7 +344,7 @@ try {
 	Write-Log "Request params: $($RqtParams | Format-List -Force | Out-String)"
 
 	if ($LogAnalyticsWorkspaceId -and $LogAnalyticsPrimaryKey) {
-		Write-Log "Log ananlytics is enabled"
+		Write-Log "Log analytics is enabled"
 	}
 
 	#endregion
