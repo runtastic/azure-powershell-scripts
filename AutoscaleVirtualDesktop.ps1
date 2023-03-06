@@ -360,16 +360,16 @@ try {
 		# Azure auth
 		$AzContext = $null
 		try {
-			$AzAuth = Connect-AzAccount -ApplicationId $ConnectionAsset.ApplicationId -CertificateThumbprint $ConnectionAsset.CertificateThumbprint -TenantId $ConnectionAsset.TenantId -SubscriptionId $ConnectionAsset.SubscriptionId -EnvironmentName $EnvironmentName -ServicePrincipal
+			$AzAuth = Connect-AzAccount -Identity
 			if (!$AzAuth -or !$AzAuth.Context) {
 				throw $AzAuth
 			}
 			$AzContext = $AzAuth.Context
 		}
 		catch {
-			throw [System.Exception]::new('Failed to authenticate Azure with application ID, tenant ID, subscription ID', $PSItem.Exception)
+			throw [System.Exception]::new('Failed to authenticate Azure with managed identity', $PSItem.Exception)
 		}
-		Write-Log "Successfully authenticated with Azure using service principal: $($AzContext | Format-List -Force | Out-String)"
+		Write-Log "Successfully authenticated with Azure using managed identity: $($AzContext | Format-List -Force | Out-String)"
 
 		# Set Azure context with subscription, tenant
 		if ($AzContext.Tenant.Id -ine $ConnectionAsset.TenantId -or $AzContext.Subscription.Id -ine $ConnectionAsset.SubscriptionId) {

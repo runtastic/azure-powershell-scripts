@@ -15,33 +15,16 @@ Write-Output ""
 Write-Output "------------------------ Authentication ------------------------"
 Write-Output "Logging into Azure ..."
 
+# To test outside of Azure Automation, replace this block with Login-AzAccount
+# Login-AzAccount
 try
 {
-    # Ensures you do not inherit an AzContext in your runbook
-    $null = Disable-AzContextAutosave -Scope Process
-
-    $Conn = Get-AutomationConnection -Name AzureRunAsConnection
-    
-    $null = Connect-AzAccount `
-                    -ServicePrincipal `
-                    -Tenant $Conn.TenantID `
-                    -ApplicationId $Conn.ApplicationID `
-                    -CertificateThumbprint $Conn.CertificateThumbprint
-
-    Write-Output "Successfully logged into Azure." 
-} 
-catch
-{
-    if (!$Conn)
-    {
-        $ErrorMessage = "Service principal not found."
-        throw $ErrorMessage
-    } 
-    else
-    {
-        Write-Error -Message $_.Exception
-        throw $_.Exception
-    }
+    "Logging in to Azure..."
+    Connect-AzAccount -Identity
+}
+catch {
+    Write-Error -Message $_.Exception
+    throw $_.Exception
 }
 ## End of authentication
 
