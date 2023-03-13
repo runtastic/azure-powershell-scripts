@@ -1,7 +1,7 @@
 
 <#
 .SYNOPSIS
-	v0.1.38
+	v0.1.39
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param (
@@ -353,10 +353,6 @@ try {
 	#region azure auth, ctx
 
 	if (!$SkipAuth) {
-		# Collect the credentials from Azure Automation Account Assets
-		Write-Log "Get auto connection from asset: '$ConnectionAssetName'"
-		$ConnectionAsset = Get-AutomationConnection -Name $ConnectionAssetName
-		
 		# Azure auth
 		$AzContext = $null
 		try {
@@ -370,22 +366,6 @@ try {
 			throw [System.Exception]::new('Failed to authenticate Azure with managed identity', $PSItem.Exception)
 		}
 		Write-Log "Successfully authenticated with Azure using managed identity: $($AzContext | Format-List -Force | Out-String)"
-
-		# Set Azure context with subscription, tenant
-		if ($AzContext.Tenant.Id -ine $ConnectionAsset.TenantId -or $AzContext.Subscription.Id -ine $ConnectionAsset.SubscriptionId) {
-			if ($PSCmdlet.ShouldProcess((@($ConnectionAsset.TenantId, $ConnectionAsset.SubscriptionId) -join ', '), 'Set Azure context with tenant ID, subscription ID')) {
-				try {
-					$AzContext = Set-AzContext -TenantId $ConnectionAsset.TenantId -SubscriptionId $ConnectionAsset.SubscriptionId
-					if (!$AzContext -or $AzContext.Tenant.Id -ine $ConnectionAsset.TenantId -or $AzContext.Subscription.Id -ine $ConnectionAsset.SubscriptionId) {
-						throw $AzContext
-					}
-				}
-				catch {
-					throw [System.Exception]::new('Failed to set Azure context with tenant ID, subscription ID', $PSItem.Exception)
-				}
-				Write-Log "Successfully set the Azure context with the tenant ID, subscription ID: $($AzContext | Format-List -Force | Out-String)"
-			}
-		}
 	}
 
 	#endregion
